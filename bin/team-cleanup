@@ -1,0 +1,59 @@
+#!/bin/bash
+# team-cleanup — memory hygiene at the END of a /team task.
+#
+#   - Reaps stray grok "leader" daemon processes (frees cached memory).
+#   - Optionally clears finished per-task grok/claude channel state files.
+#   - Optionally clears the team-mode flag (leave team mode).
+#
+# Run this at INTEGRATE, once the task is done. Do NOT run it mid-task: the
+# grok master's warm context cache lives in the leader, and reaping it early
+# forces a cold disk-resume (correct, but slower and loses KV cache).
+#
+# Usage:
+#   team-cleanup                 # reap grok leaders only
+#   team-cleanup --task <slug>   # ...and rm channel state matching *<slug>*
+#   team-cleanup --exit          # ...and clear the team-mode flag
+#   team-cleanup --task <slug> --exit
+set -u
+
+GROK_BIN="$HOME/.grok/bin/grok"
+TASK=""
+DO_EXIT=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --task) TASK="${2:-}"; shift 2 ;;
+    --exit) DO_EXIT=1; shift ;;
+    -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "team-cleanup: unknown arg: $1" >&2; exit 2 ;;
+  esac
+done
+
+echo "team-cleanup: reaping grok leader processes..."
+if [[ -x "$GROK_BIN" ]]; then
+  "$GROK_BIN" leader list 2>/dev/null || true
+  if "$GROK_BIN" leader kill 2>/dev/null; then
+    echo "  grok leaders stopped"
+  else
+    echo "  (no grok leaders running)"
+  fi
+else
+  echo "  (grok binary not found at $GROK_BIN — skipping)"
+fi
+
+if [[ -n "$TASK" ]]; then
+  for d in "$HOME/grok-bridge/channels" "$HOME/agent-team/channels"; do
+    [[ -d "$d" ]] || continue
+    n=$(find "$d" -maxdepth 1 -name "*$TASK*.json" 2>/dev/null | wc -l | tr -d ' ')
+    if [[ "$n" != "0" ]]; then
+      find "$d" -maxdepth 1 -name "*$TASK*.json" -delete 2>/dev/null
+      echo "  cleared $n channel state file(s) in $d matching *$TASK*"
+    fi
+  done
+fi
+
+if [[ $DO_EXIT -eq 1 ]]; then
+  rm -f "$HOME/agent-team/state/active" && echo "  team-mode flag cleared (left team mode)"
+fi
+
+echo "team-cleanup: done."
