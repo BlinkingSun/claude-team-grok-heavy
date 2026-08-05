@@ -216,6 +216,13 @@ without re-typing `/team`:
 ## Standing rules
 
 - Roster `policies` and `design_rules` are **binding** — read and apply them each run.
+- **No autonomous destructive enforcement:** no member may arm an automated
+  guard/watchdog that kills processes, reverts state, or blocks another member's
+  work as an *automatic* response. Guards may observe and ALERT only; any
+  destructive response requires the orchestrator's explicit go-ahead under fresh
+  context. Before enforcing a safety invariant, confirm with the orchestrator
+  that it still holds — user authorization or completed orchestrator steps may
+  have lifted it.
 - **Live team reports** (above) are part of the protocol, not a courtesy.
 - **Context separation (anti-bias):** planner, executor, and auditor/tester are
   distinct actors. An auditor/tester never wrote the code it reviews and never gets

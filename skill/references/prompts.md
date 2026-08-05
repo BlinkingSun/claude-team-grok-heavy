@@ -81,7 +81,10 @@ Agent-tool prompt (model = `assignment.execution_master`):
 > Collect each executor's `DONE/OPEN/TEST/BLOCKERS`, review the diffs **without
 > bias**, and reply with: per-subtask status, the worktree paths, any subtask you
 > re-routed and why, and BLOCKERS needing the orchestrator. Do not commit, push, or
-> deploy. Executors close (their process exits) once their subtask passes.
+> deploy.
+> NEVER arm automated guards/watchdogs that kill processes or revert state — if you
+> believe something unsafe is happening, ALERT the orchestrator and wait; your
+> picture of what is authorized may be behind. Executors close (their process exits) once their subtask passes.
 
 ---
 

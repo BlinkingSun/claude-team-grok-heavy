@@ -1,39 +1,46 @@
 {
-  "_comment": "TEAM ROSTER — single source of truth for the /team (grok-heavy) skill. Edit THIS FILE to add/remove models, change caps, or repoint roles; the skill reads it fresh every run and never hardcodes members. No skill edits needed. This is the GROK-HEAVY edition: it leans on Grok for a persistent master auditor/tester (up to 5 slave subagents), a fast executor pool (up to 10), and all research/imagine work — so it expects a generous Grok plan (SuperGrok Heavy / X Premium+). If you do NOT have heavy Grok usage, use the lighter github.com/BlinkingSun/claude-team-skill instead.",
+  "_comment": "TEAM ROSTER \u2014 single source of truth for the /team (grok-heavy) skill. Edit THIS FILE to add/remove models, change caps, or repoint roles; the skill reads it fresh every run and never hardcodes members. No skill edits needed. This is the GROK-HEAVY edition: it leans on Grok for a persistent master auditor/tester (up to 5 slave subagents), a fast executor pool (up to 10), and all research/imagine work \u2014 so it expects a generous Grok plan (SuperGrok Heavy / X Premium+). If you do NOT have heavy Grok usage, use the lighter github.com/BlinkingSun/claude-team-skill instead.",
   "version": 1,
   "updated": "2026-07-17",
-
   "coordinator_focus": "You are a senior systems engineer, specialized in software development for AI workflows. Your primary job is to create tasks for other agents based on a master plan to achieve a software goal. You are the coordinator and planner but have a team of ace agents which you should use to your advantage. Avoid confirmation bias by maintaining a layer of context separation. Auditors should be thorough to find edge case scenarios. Executors should report changes and have their execution reviewed without bias. The plan should maintain consistency with the rest of the project so leave design guidelines for the next agent as you build. Button alignment, color schemes and arrangement are important. If the user wants a UI, use Grok Imagine to help visualize the desires and go through a graphical approval process with the user before committing to building all of the features and then having to make a bunch of code modifications to get it right. Do not use emojis in UIs. Prioritize multi-threading to speed up anything which takes real compute. Prioritize builds on Apple Silicon unless specifically requested otherwise by the user. Prioritize stacks which allow for a visually pleasant and spectacular user experience through the UI. Animation is great where it fits in seamlessly. Be creative and be autonomous but ask the user when you are stuck or need clarification.",
-
   "design_rules": [
     "UIs default to DARK MODE. Light mode is opt-in only when the user asks.",
     "Do NOT use emojis in UIs.",
-    "Button alignment, color scheme, spacing, and arrangement are first-class — keep them consistent with the rest of the project. Leave written design guidelines in the workdir for the next agent as you build.",
+    "Button alignment, color scheme, spacing, and arrangement are first-class \u2014 keep them consistent with the rest of the project. Leave written design guidelines in the workdir for the next agent as you build.",
     "For any UI: run the Grok Imagine graphical-approval gate BEFORE building features (see the UI flow in the skill). Iterate on the mockup, not on shipped code.",
     "Every app you build ships a custom ICON generated with Grok Imagine that fits the program's purpose and matches its aesthetic (dark, modern). Produce the icon, get sign-off with the mockup, then integrate it (on macOS: .iconset -> iconutil -> .icns).",
-    "Prioritize a visually pleasant, spectacular UX. Seamless animation where it fits — never gratuitous.",
+    "Prioritize a visually pleasant, spectacular UX. Seamless animation where it fits \u2014 never gratuitous.",
     "Prioritize multi-threading for anything that does real compute.",
     "Prioritize Apple Silicon builds unless the user requests otherwise."
   ],
-
   "members": [
     {
       "name": "fable",
       "provider": "anthropic",
       "model": "claude-fable-5",
       "role_hint": "orchestrator / planner / integrator (the live session)",
-      "invoke": { "method": "current-session" },
-      "strengths": ["decomposition", "architecture", "integration", "final review", "project context"],
-      "may_spawn": ["grok worker bees via grok-ask during planning (research unknowns, quick spikes)"],
+      "invoke": {
+        "method": "current-session"
+      },
+      "strengths": [
+        "decomposition",
+        "architecture",
+        "integration",
+        "final review",
+        "project context"
+      ],
+      "may_spawn": [
+        "grok worker bees via grok-ask during planning (research unknowns, quick spikes)"
+      ],
       "budget": "claude-plan",
       "enabled": true,
-      "notes": "The orchestrating session itself — whatever model your session runs orchestrates (the reference setup runs Fable 5). Never delegated to. Owns all git, signing, release, deploy, and the final report to the user. May spawn grok worker bees during planning."
+      "notes": "The orchestrating session itself \u2014 whatever model your session runs orchestrates (the reference setup runs Fable 5). Never delegated to. Owns all git, signing, release, deploy, and the final report to the user. May spawn grok worker bees during planning."
     },
     {
       "name": "grok-master",
       "provider": "xai",
       "model": "grok-4.5",
-      "auth": "subscription (grok login / grok.com OAuth). NEVER set XAI_API_KEY — that bills separate API credits instead of your subscription.",
+      "auth": "subscription (grok login / grok.com OAuth). NEVER set XAI_API_KEY \u2014 that bills separate API credits instead of your subscription.",
       "role_hint": "persistent master auditor + execution auditor + tester + UI visualizer",
       "invoke": {
         "method": "grok-ask",
@@ -51,10 +58,17 @@
         "UI visualizer (Grok Imagine / image_gen -> concept mockups + app icons for the approval gate)"
       ],
       "lifecycle": "STAYS OPEN until the team task is complete (context caching). Slaves close when their task finishes.",
-      "strengths": ["independent verification (different model family, zero shared bias)", "fresh-eyes review", "edge-case hunting", "web-current research", "headless testing", "Grok Imagine (image_gen)"],
-      "budget": "grok-plan — does NOT consume Claude limits. GROK-HEAVY: this member is used a lot; expects a generous Grok plan (SuperGrok Heavy / X Premium+).",
+      "strengths": [
+        "independent verification (different model family, zero shared bias)",
+        "fresh-eyes review",
+        "edge-case hunting",
+        "web-current research",
+        "headless testing",
+        "Grok Imagine (image_gen)"
+      ],
+      "budget": "grok-plan \u2014 does NOT consume Claude limits. GROK-HEAVY: this member is used a lot; expects a generous Grok plan (SuperGrok Heavy / X Premium+).",
       "enabled": true,
-      "notes": "Grok 4.5 via the Grok Build CLI (>= 0.2.102 for Grok Imagine), driven headless by the claude-grok-bridge wrapper (github.com/BlinkingSun/claude-grok-bridge). Setup: curl -fsSL https://x.ai/cli/install.sh | bash; grok login; then install the bridge. If the wrapper is missing at run time, treat this member as disabled — the skill falls back to Claude tiers for audit/verify/test and tells the user (but you lose the point of this edition; use the lighter claude-team-skill instead)."
+      "notes": "Grok 4.5 via the Grok Build CLI (>= 0.2.102 for Grok Imagine), driven headless by the claude-grok-bridge wrapper (github.com/BlinkingSun/claude-grok-bridge). Setup: curl -fsSL https://x.ai/cli/install.sh | bash; grok login; then install the bridge. If the wrapper is missing at run time, treat this member as disabled \u2014 the skill falls back to Claude tiers for audit/verify/test and tells the user (but you lose the point of this edition; use the lighter claude-team-skill instead)."
     },
     {
       "name": "execution-master",
@@ -69,8 +83,12 @@
         "what": "up to 10 grok executors via grok-ask -w in isolated worktrees/scratch dirs. Executors build, report to the execution-master, and close (grok-ask process exits) when their subtask passes.",
         "cap": 10
       },
-      "strengths": ["execution decomposition", "dispatch + coordination", "reviewing grok output without bias"],
-      "budget": "claude-plan (moderate) — coordinates and reviews; does NOT do the bulk build itself.",
+      "strengths": [
+        "execution decomposition",
+        "dispatch + coordination",
+        "reviewing grok output without bias"
+      ],
+      "budget": "claude-plan (moderate) \u2014 coordinates and reviews; does NOT do the bulk build itself.",
       "enabled": true
     },
     {
@@ -78,14 +96,18 @@
       "provider": "xai",
       "model": "grok-4.5",
       "auth": "subscription (grok.com OAuth). Never XAI_API_KEY.",
-      "role_hint": "fast bulk builder — the DEFAULT executor for large/parallelizable subtasks",
+      "role_hint": "fast bulk builder \u2014 the DEFAULT executor for large/parallelizable subtasks",
       "invoke": {
         "method": "grok-ask",
         "worker": "~/grok-bridge/bin/grok-ask -w -c exec-<task>-<n> -d <worktree> \"Read SPEC.md. Implement per acceptance criteria. Run the tests. Reply DONE/OPEN/TEST/BLOCKERS.\""
       },
       "lifecycle": "one-shot per call (process exits = closed). Never resumed after its subtask passes verification.",
-      "strengths": ["fast implementation", "parallel bulk build", "can replace sonnet/opus for large tasks"],
-      "budget": "grok-plan — does NOT consume Claude limits. The default build muscle; used heavily.",
+      "strengths": [
+        "fast implementation",
+        "parallel bulk build",
+        "can replace sonnet/opus for large tasks"
+      ],
+      "budget": "grok-plan \u2014 does NOT consume Claude limits. The default build muscle; used heavily.",
       "enabled": true
     },
     {
@@ -93,9 +115,16 @@
       "provider": "anthropic",
       "model": "opus",
       "role_hint": "direct Claude executor for genuinely HARD/subtle subtasks only",
-      "invoke": { "method": "agent-tool", "detached_alt": "claude-ask -m opus -w -c <channel> -d <dir> \"<spec>\"" },
-      "strengths": ["hard implementation", "subtle debugging", "algorithmic work"],
-      "budget": "claude-plan (heavy — spend deliberately)",
+      "invoke": {
+        "method": "agent-tool",
+        "detached_alt": "claude-ask -m opus -w -c <channel> -d <dir> \"<spec>\""
+      },
+      "strengths": [
+        "hard implementation",
+        "subtle debugging",
+        "algorithmic work"
+      ],
+      "budget": "claude-plan (heavy \u2014 spend deliberately)",
       "enabled": true
     },
     {
@@ -103,8 +132,15 @@
       "provider": "anthropic",
       "model": "sonnet",
       "role_hint": "direct Claude executor for medium subtasks the plan master flags as risky for a fast model",
-      "invoke": { "method": "agent-tool", "detached_alt": "claude-ask -m sonnet -w -c <channel> -d <dir> \"<spec>\"" },
-      "strengths": ["solid general implementation", "refactors", "test writing"],
+      "invoke": {
+        "method": "agent-tool",
+        "detached_alt": "claude-ask -m sonnet -w -c <channel> -d <dir> \"<spec>\""
+      },
+      "strengths": [
+        "solid general implementation",
+        "refactors",
+        "test writing"
+      ],
       "budget": "claude-plan (moderate)",
       "enabled": true
     },
@@ -112,13 +148,19 @@
       "name": "haiku",
       "provider": "anthropic",
       "model": "haiku",
-      "invoke": { "method": "agent-tool", "detached_alt": "claude-ask -m haiku -w -c <channel> -d <dir> \"<spec>\"" },
-      "strengths": ["mechanical edits", "boilerplate", "bulk file operations"],
+      "invoke": {
+        "method": "agent-tool",
+        "detached_alt": "claude-ask -m haiku -w -c <channel> -d <dir> \"<spec>\""
+      },
+      "strengths": [
+        "mechanical edits",
+        "boilerplate",
+        "bulk file operations"
+      ],
       "budget": "claude-plan (light)",
       "enabled": true
     }
   ],
-
   "assignment": {
     "_comment": "role -> member name. Build work defaults to grok-executor (this edition uses grok heavily); Claude executor tiers are reserved for hard/risky subtasks the plan master flags.",
     "orchestrator": "fable",
@@ -130,29 +172,32 @@
     "researcher": "grok-master",
     "execution_master": "execution-master",
     "executor_pool": "grok-executor",
-    "executor_direct": { "hard": "opus", "risky": "sonnet", "trivial": "haiku" }
+    "executor_direct": {
+      "hard": "opus",
+      "risky": "sonnet",
+      "trivial": "haiku"
+    }
   },
-
   "caps": {
     "slave_auditors": 5,
     "grok_executors": 10,
     "verify_loops": 3
   },
-
   "policies": [
     "GROK-HEAVY by design. Grok 4.5 through the Grok Build CLI subscription does not consume Claude limits, so default build work to the grok-executor pool and route all audit/test/research/imagine to Grok. Reserve Claude executor tiers (opus/sonnet/haiku) for subtasks the plan master flags as genuinely hard, subtle, or high-risk for a fast model. This assumes a generous Grok plan; on a light Grok plan, use claude-team-skill instead.",
     "ALL Grok calls go through the bridge (~/grok-bridge/bin/grok-ask) on grok-4.5 using the Grok subscription login. NEVER set XAI_API_KEY or route Grok through paid API credits.",
-    "A member whose wrapper or CLI is not installed is treated as disabled — apply the fallbacks and tell the user which member was unavailable. If Grok is unavailable, audit/test/execute fall back to Claude tiers (a different model than the one that wrote the code), and you lose this edition's advantage.",
-    "ONE grok master per team task (channel master-<task>). Opened at plan audit, it STAYS OPEN (resumed) through execution audit and testing, closing only at integrate — this keeps its context cache warm. The master decides how to deploy up to caps.slave_auditors slave auditors/researchers (native grok subagents); each slave researches one unknown OR reviews one slice, reports to the master, and closes when done. The master consolidates and reports to the orchestrator.",
+    "A member whose wrapper or CLI is not installed is treated as disabled \u2014 apply the fallbacks and tell the user which member was unavailable. If Grok is unavailable, audit/test/execute fall back to Claude tiers (a different model than the one that wrote the code), and you lose this edition's advantage.",
+    "ONE grok master per team task (channel master-<task>). Opened at plan audit, it STAYS OPEN (resumed) through execution audit and testing, closing only at integrate \u2014 this keeps its context cache warm. The master decides how to deploy up to caps.slave_auditors slave auditors/researchers (native grok subagents); each slave researches one unknown OR reviews one slice, reports to the master, and closes when done. The master consolidates and reports to the orchestrator.",
     "The execution-master (an Anthropic model) decomposes the build and spawns up to caps.grok_executors grok executors (worker mode, isolated worktrees/scratch dirs). Executors report to the execution-master and close (their grok-ask process exits) when their subtask passes. The execution-master reviews Grok output WITHOUT bias before reporting up.",
-    "Context separation is mandatory to avoid confirmation bias: the planner (fable), the executors (grok/claude), and the auditor/tester (grok-master) are DISTINCT actors. An auditor or tester must never be the member that wrote the code under review, and never gets write access to it — it may run the program and probe its API, not edit its source.",
-    "The verify loop runs at most caps.verify_loops full cycles (execute -> audit -> test -> rework). If the outcome is still not right after the cap, STOP and ask the user how to proceed — never loop indefinitely.",
+    "Context separation is mandatory to avoid confirmation bias: the planner (fable), the executors (grok/claude), and the auditor/tester (grok-master) are DISTINCT actors. An auditor or tester must never be the member that wrote the code under review, and never gets write access to it \u2014 it may run the program and probe its API, not edit its source.",
+    "The verify loop runs at most caps.verify_loops full cycles (execute -> audit -> test -> rework). If the outcome is still not right after the cap, STOP and ask the user how to proceed \u2014 never loop indefinitely.",
     "Every program you build MUST expose an API (HTTP / CLI / socket) so the grok-master tester can validate features headlessly. When a feature can only be confirmed visually, the tester captures a screenshot (headless browser for web UIs; screen capture / image tools for native) and checks it against the approved mockup.",
-    "UI work (binding — see design_rules): default to DARK MODE; no emojis; before building features, run the Grok Imagine approval gate (grok-master image_gen renders concept mockups; the user signs off graphically); iterate on the mockup, not shipped code. Every app also gets a fitting custom icon generated with Grok Imagine and integrated.",
+    "UI work (binding \u2014 see design_rules): default to DARK MODE; no emojis; before building features, run the Grok Imagine approval gate (grok-master image_gen renders concept mockups; the user signs off graphically); iterate on the mockup, not shipped code. Every app also gets a fitting custom icon generated with Grok Imagine and integrated.",
     "Prioritize multi-threading for CPU-heavy work, and Apple Silicon builds unless the user asks otherwise.",
     "No member except the orchestrator may commit, push, sign, notarize, or deploy. Never run any worker-mode member inside hardware-connected or release-critical directories (serial-connected equipment, device flashing, publish/deploy scripts).",
     "Memory hygiene: slaves and executors close after their task (grok-ask calls are one-shot; native subagents die with the parent). Only the master channel persists. At integrate (task done), run ~/agent-team/bin/team-cleanup to reap stray grok leader processes and clear finished channel state. Do NOT reap the grok leader mid-task or the master loses its warm cache.",
     "Team-mode persistence: while ~/agent-team/state/active exists, the UserPromptSubmit hook routes every prompt through this skill so the project continues in team mode without re-typing /team. The user exits with 'exit team mode'.",
-    "Live team reports: relay each audit, test, and verify result to the user as it lands — verdicts, contradictions, accepted vs rejected findings — not only in the final report."
+    "Live team reports: relay each audit, test, and verify result to the user as it lands \u2014 verdicts, contradictions, accepted vs rejected findings \u2014 not only in the final report.",
+    "NO AUTONOMOUS DESTRUCTIVE ENFORCEMENT: no member may arm an automated guard/watchdog that kills processes, reverts state, or blocks another member's work as an automatic response. Guards observe and ALERT only; destructive response requires the orchestrator's explicit go-ahead under fresh context. Before enforcing a safety invariant, confirm with the orchestrator that it still holds \u2014 user authorization or completed orchestrator steps may have lifted it."
   ]
 }
